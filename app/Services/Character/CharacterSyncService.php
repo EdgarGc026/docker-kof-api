@@ -1,6 +1,10 @@
 <?php
 namespace App\Services\character;
 
+use App\Models\Character;
+use Goutte\Client;
+use Illuminate\Http\JsonResponse;
+
 class CharacterSyncService {
  public function sync(): JsonResponse {
   try {

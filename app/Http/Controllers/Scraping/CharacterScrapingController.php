@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Scraping;
 use App\Http\Controllers\Controller;
 use App\Services\Character\CharacterService;
 
-class CharacterScraping extends Controller {
+class CharacterScrapingController extends Controller {
  public function characterSync(CharacterService $characterService) {
   $characterService->characterSync();
  }
