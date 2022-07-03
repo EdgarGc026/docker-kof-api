@@ -6,11 +6,6 @@ use App\Models\Character;
 use Goutte\Client;
 
 class CharacterScrapingService {
- private static $remainingCharacters = [
-  "https://kof.fandom.com/es/wiki/Zero_(NESTS)",
-  "https://kof.fandom.com/es/wiki/Zero_(clon)",
- ];
-
  public function scraping() {
   $this->charactersProfile();
  }
@@ -20,7 +15,6 @@ class CharacterScrapingService {
   $client = new Client();
   $characters = Character::all();
   $this->executeCharacterScraping($characters, $client);
-  $this->remainingCharacters($characters, $client, $remainingCharacters);
  }
 
  //Obtenemos un simple monito
@@ -29,29 +23,25 @@ class CharacterScrapingService {
   $client = new Client();
   $crawler = $client->request('GET', $url);
 
-  $arrayCharacter = $this->buildCharacter($avatarImage, $profileTitleResult, $profileDataResult);
+  $arrayCharacter = $this->buildCharacter($crawler);
   $this->saveCharacter($characters, $arrayCharacter);
- }
-
- //TODO: Por terminar
- //private function remainingCharacters($characters, $client, $remainingCharacters) {}
-
- //TODO: Por verificar
- private function buildCharacter($avatarImage, $profileTitleResult, $profileDataResult): array
- {
-  $avatarImage = $this->getCharacterImage($crawler);
-  $profileTitleResult = $this->getLeftDataProfile($crawler);
-  $profileDataResult = $this->getRightDataProfile($crawler);
-  $arrayCharacter = $this->mergeData($profileTitleResult, $profileDataResult, $avatarImage);
-  return $arrayCharacter;
  }
 
  private function executeCharacterScraping($characters, $client): void {
   foreach ($characters as $character) {
    $crawler = $client->request('GET' . $character->url);
-   $arrayCharacter = $this->buildCharacter($avatarImage, $profileTitleResult, $profileDataResult);
+   $arrayCharacter = $this->buildCharacter($crawler);
    $this->saveCharacter($character, $arrayCharacter);
   }
+ }
+
+ //TODO: Por verificar
+ private function buildCharacter($crawler): array{
+  $avatarImage = $this->getCharacterImage($crawler);
+  $profileTitleResult = $this->getLeftDataProfile($crawler);
+  $profileDataResult = $this->getRightDataProfile($crawler);
+  $arrayCharacter = $this->mergeData($profileTitleResult, $profileDataResult, $avatarImage);
+  return $arrayCharacter;
  }
 
  private function saveCharacter($character, $arrayCharacter) {
@@ -119,14 +109,14 @@ class CharacterScrapingService {
  {
   $arrayImage = ['Avatar' => $avatarImage];
   array_shift($rightArrayData);
-  $combineArray = array_combine($leftArrayData, $rightArrayData);
+  $combineArray = array_combine($profileTitleResult, $profileDataResult);
   $arrFinal = array_merge($combineArray, $arrayImage);
   return $arrFinal;
  }
 
- public function utils() {
-  echo "<pre>";
-  print_r($var);
-  echo "</pre>";
- }
+/*  public function utils() {
+echo "<pre>";
+print_r($var);
+echo "</pre>";
+} */
 }

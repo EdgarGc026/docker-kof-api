@@ -9,11 +9,10 @@ Route::get('/', function () {
 
 //Para obtener los atributos de los personajes a scrapear (nombre, id, url)
 Route::get('/characterSync', [CharacterScrapingController::class, 'characterSync']);
-Route::post('/characterSync', [CharacterScrapingController::class], 'characterSync');
+Route::post('/characterSync', [CharacterScrapingController::class, 'characterSync']);
 
 //Ruta de prueba
-Route::get('/remainingCharacters', [CharacterScrapingController::class], 'remainingCharacters');
-//Route::post('/remainingCharacters', [CharacterScrapingController::class], 'remainingCharacters');
+Route::get('/remainingCharacters', [CharacterScrapingController::class, 'remainingCharacters']);
 
 //Hara el scraping de los personajes
 Route::get('/characterScraping', [CharacterScrapingController::class, 'characterScraping']);

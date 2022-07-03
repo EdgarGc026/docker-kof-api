@@ -23,6 +23,6 @@ class CharacterService {
 
  public function remainingCharacters(): void {
   $characterSync = new CharacterSyncService();
-  $characterSync->remainCharacter();
+  $characterSync->characterFourthPart();
  }
 }

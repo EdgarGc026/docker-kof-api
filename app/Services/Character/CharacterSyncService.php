@@ -6,12 +6,6 @@ use Goutte\Client;
 use Illuminate\Http\JsonResponse;
 
 class CharacterSyncService {
-
-/* private static $remainingCharactersArray = [
-"https://kof.fandom.com/es/wiki/Zero_(NESTS)",
-"https://kof.fandom.com/es/wiki/Zero_(clon)",
-];*/
-
  public function sync(): void {
   $this->initCharacter();
  }
@@ -28,16 +22,14 @@ class CharacterSyncService {
   }
  }
 
- public function remainCharacter() {
-  print_r("Hola");
- }
-
  private function characterInformation($url): array{
   $client = new Client();
   $crawler = $client->request('GET', $url);
   $characterFirstPart = $this->characterFirstPart($crawler);
   $characterSecondPart = $this->characterSecondPart($crawler);
-  $characterArray = array_merge($characterFirstPart, $characterSecondPart);
+  $characterThirdPart = $this->characterThirdPart($crawler);
+  $characterFourthPart = $this->characterFourthPart();
+  $characterArray = array_merge($characterFirstPart, $characterSecondPart, $characterThirdPart, $characterFourthPart);
   return $characterArray;
  }
 
@@ -60,15 +52,31 @@ class CharacterSyncService {
  private function characterFirstPart($crawler): array{
   $elementTd = $crawler->filter('table tbody tr')->children('td');
   $names = $elementTd->children('a')->extract(['href']);
-  $arrayData = $this->characterProfile($names);
-  return $arrayData;
+  $arrayNames = $this->characterProfile($names);
+  return $arrayNames;
  }
 
  private function characterSecondPart($crawler): array{
   $elementTd = $crawler->filter('table tbody tr')->children('td');
   $names = $elementTd->children('p > a')->extract(['href']);
-  $arrayData = $this->characterProfile($names);
-  return $arrayData;
+  $arrayNames = $this->characterProfile($names);
+  return $arrayNames;
+ }
+
+ private function characterThirdPart($crawler) {
+  $elementTd = $crawler->filter('table tbody tr')->children('td');
+  $names = $elementTd->children('p > b > a')->extract(['href']);
+  $arrayNames = $this->characterProfile($names);
+  return $arrayNames;
+ }
+
+ public function characterFourthPart() {
+  $remainingCharactersArray = [
+   "/es/wiki/Zero_(NESTS)", "/es/wiki/Zero_(clon)",
+  ];
+
+  $arrayNames = $this->characterProfile($remainingCharactersArray);
+  return $arrayNames;
  }
 
  private function characterProfile($names): array{
