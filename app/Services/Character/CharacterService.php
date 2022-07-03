@@ -2,7 +2,7 @@
 
 namespace App\Services\Character;
 
-use App\Http\Controllers\Scraping\CharacterScrapingController;
+use App\Services\Character\CharacterScrapingService;
 use App\Services\Character\CharacterSyncService;
 
 class CharacterService {
@@ -11,14 +11,18 @@ class CharacterService {
   $characterSync->sync();
  }
 
- public function characterScraping() {
-  $characterScraping = new CharacterScrapingController();
+ public function characterScraping(): void {
+  $characterScraping = new CharacterScrapingService();
   $characterScraping->scraping();
  }
 
- public function singleCharacter() {
-  $singleCharacterScraping = new CharacterScrapingController();
-  $singleCharacterScraping->singleCharacter('https://kof.fandom.com/es/wiki/Zero_(clon)');
+ public function singleCharacter(): void {
+  $singleCharacterScraping = new CharacterScrapingService();
+  $singleCharacterScraping->singleCharacter("https://kof.fandom.com/es/wiki/Zero_(NESTS)");
  }
 
+ public function remainingCharacters(): void {
+  $characterSync = new CharacterSyncService();
+  $characterSync->remainCharacter();
+ }
 }

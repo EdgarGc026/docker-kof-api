@@ -1,21 +1,26 @@
 <?php
 
-namespace App\Service\Character;
+namespace App\Services\Character;
 
 use App\Models\Character;
 use Goutte\Client;
 
 class CharacterScrapingService {
+ private static $remainingCharacters = [
+  "https://kof.fandom.com/es/wiki/Zero_(NESTS)",
+  "https://kof.fandom.com/es/wiki/Zero_(clon)",
+ ];
 
  public function scraping() {
-  $this->getCharactersProfile();
+  $this->charactersProfile();
  }
 
  //Obtenemos todos los monos en general
- private function getCharactersProfile(): void {
+ private function charactersProfile(): void {
   $client = new Client();
   $characters = Character::all();
   $this->executeCharacterScraping($characters, $client);
+  $this->remainingCharacters($characters, $client, $remainingCharacters);
  }
 
  //Obtenemos un simple monito
@@ -28,8 +33,12 @@ class CharacterScrapingService {
   $this->saveCharacter($characters, $arrayCharacter);
  }
 
+ //TODO: Por terminar
+ //private function remainingCharacters($characters, $client, $remainingCharacters) {}
+
  //TODO: Por verificar
- private function buildCharacter($avatarImage, $profileTitleResult, $profileDataResult): array{
+ private function buildCharacter($avatarImage, $profileTitleResult, $profileDataResult): array
+ {
   $avatarImage = $this->getCharacterImage($crawler);
   $profileTitleResult = $this->getLeftDataProfile($crawler);
   $profileDataResult = $this->getRightDataProfile($crawler);
@@ -82,7 +91,8 @@ class CharacterScrapingService {
   }
  }
 
- private function getLeftDataProfile($crawler): array{
+ private function getLeftDataProfile($crawler): array
+ {
   $data = [];
   $elementTd = $crawler->filter('table.darktable tbody tr')->filter('td');
   foreach ($elementTd as $key => $td) {
@@ -93,7 +103,8 @@ class CharacterScrapingService {
   return $data;
  }
 
- private function getRightDataProfile($crawler): array{
+ private function getRightDataProfile($crawler): array
+ {
   $data = [];
   $elementTd = $crawler->filter('table.darktable tbody tr')->filter('td');
   foreach ($elementTd as $key => $td) {
@@ -104,7 +115,8 @@ class CharacterScrapingService {
   return $data;
  }
 
- private function mergeData($profileTitleResult, $profileDataResult, $avatarImage): array{
+ private function mergeData($profileTitleResult, $profileDataResult, $avatarImage): array
+ {
   $arrayImage = ['Avatar' => $avatarImage];
   array_shift($rightArrayData);
   $combineArray = array_combine($leftArrayData, $rightArrayData);

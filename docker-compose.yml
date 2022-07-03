@@ -7,16 +7,24 @@ services:
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
+                # Lineas agregadas para el XDEBUG
+                XDEBUG: '${APP_DEBUG:-false}'
+                XDEBUG_PORT: '${SAIL_XDEBUG_PORT:-9003}'
         image: sail-8.1/app
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
             - '${APP_PORT:-80}:80'
+            #Expuesto para XDEBUG
+        expose:
+            - "9003"
+        # Añadido XDEBUG_CONFIG, PHP_XDEBUG_ENABLED y XDEBUG_MODE
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1
+            XDEBUG_CONFIG: ${SAIL_XDEBUG_CONFIG:-client_host=172.118.19.9}
+            PHP_XDEBUG_ENABLED: 1
             XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
-            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
         volumes:
             - '.:/var/www/html'
         networks:
@@ -59,6 +67,11 @@ services:
 networks:
     sail:
         driver: bridge
+        ipam:
+            driver: default
+            config:
+            # En este caso puede ser una subred de preferencia, puedes dejarlo tal cual si lo deseas.
+                - subnet: 172.118.19.0/24
 volumes:
     sail-mysql:
         driver: local

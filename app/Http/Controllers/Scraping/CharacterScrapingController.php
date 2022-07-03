@@ -17,4 +17,8 @@ class CharacterScrapingController extends Controller {
  public function singleCharacter(CharacterService $characterService) {
   $characterService->singleCharacter();
  }
+
+ public function remainingCharacters(CharacterService $characterService) {
+  $characterService->remainingCharacters();
+ }
 }
