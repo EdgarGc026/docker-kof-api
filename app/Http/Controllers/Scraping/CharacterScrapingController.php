@@ -14,10 +14,12 @@ class CharacterScrapingController extends Controller {
   $characterService->characterScraping();
  }
 
+ //De testeo
  public function singleCharacter(CharacterService $characterService) {
   $characterService->singleCharacter();
  }
 
+ //De testeo
  public function remainingCharacters(CharacterService $characterService) {
   $characterService->remainingCharacters();
  }

@@ -16,11 +16,13 @@ class CharacterService {
   $characterScraping->scraping();
  }
 
+ //De testeo
  public function singleCharacter(): void {
   $singleCharacterScraping = new CharacterScrapingService();
   $singleCharacterScraping->singleCharacter("https://kof.fandom.com/es/wiki/Zero_(NESTS)");
  }
 
+ //De testeo
  public function remainingCharacters(): void {
   $characterSync = new CharacterSyncService();
   $characterSync->characterFourthPart();

@@ -8,16 +8,18 @@ Route::get('/', function () {
 });
 
 //Para obtener los atributos de los personajes a scrapear (nombre, id, url)
-Route::get('/characterSync', [CharacterScrapingController::class, 'characterSync']);
-Route::post('/characterSync', [CharacterScrapingController::class, 'characterSync']);
-
-//Ruta de prueba
-Route::get('/remainingCharacters', [CharacterScrapingController::class, 'remainingCharacters']);
+Route::get('character/sync', [CharacterScrapingController::class, 'characterSync']);
+Route::post('character/sync', [CharacterScrapingController::class, 'characterSync']);
 
 //Hara el scraping de los personajes
-Route::get('/characterScraping', [CharacterScrapingController::class, 'characterScraping']);
-Route::post('/characterScraping', [CharacterScrapingController::class, 'characterScraping']);
+Route::get('character/scraping', [CharacterScrapingController::class, 'characterScraping']);
+Route::post('character/scraping', [CharacterScrapingController::class, 'characterScraping']);
+
+/* Rutas para testeo */
 
 //Probar por personaje
-Route::get('/singleCharacter', [CharacterScrapingController::class, 'singleCharacter']);
-Route::post('/singleCharacter', [CharacterScrapingController::class, 'singleCharacter']);
+Route::get('character/singleScraping', [CharacterScrapingController::class, 'singleCharacter']);
+Route::post('character/singleScraping', [CharacterScrapingController::class, 'singleCharacter']);
+
+//Ruta de prueba
+Route::get('character/remain', [CharacterScrapingController::class, 'remainingCharacters']);

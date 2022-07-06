@@ -29,7 +29,7 @@ class CharacterScrapingService {
 
  private function executeCharacterScraping($characters, $client): void {
   foreach ($characters as $character) {
-   $crawler = $client->request('GET' . $character->url);
+   $crawler = $client->request('GET', $character->url);
    $arrayCharacter = $this->buildCharacter($crawler);
    $this->saveCharacter($character, $arrayCharacter);
   }
@@ -37,15 +37,15 @@ class CharacterScrapingService {
 
  //TODO: Por verificar
  private function buildCharacter($crawler): array{
-  $avatarImage = $this->getCharacterImage($crawler);
-  $profileTitleResult = $this->getLeftDataProfile($crawler);
-  $profileDataResult = $this->getRightDataProfile($crawler);
+  $profileTitleResult = $this->titleProfile($crawler);
+  $profileDataResult = $this->dataProfile($crawler);
+  $avatarImage = $this->characterImage($crawler);
   $arrayCharacter = $this->mergeData($profileTitleResult, $profileDataResult, $avatarImage);
   return $arrayCharacter;
  }
 
- private function saveCharacter($character, $arrayCharacter) {
-  $updateCharacter = $character->update([
+ private function saveCharacter($character, $arrayCharacter): void {
+  $character->update([
    'fullname' => $arrayCharacter['Nombre Completo'] ?? null,
    'birthday' => $arrayCharacter['Fecha de Nacimiento'] ?? null,
    'weight' => $arrayCharacter['Altura'] ?? null,
@@ -67,7 +67,7 @@ class CharacterScrapingService {
   ]);
  }
 
- private function getCharacterImage($crawler): string | null {
+ private function characterImage($crawler): string | null {
   try {
    $image = $crawler->filter('table.darktable tbody tr td img')->attr('data-src');
    if (is_null($image)) {
@@ -81,8 +81,7 @@ class CharacterScrapingService {
   }
  }
 
- private function getLeftDataProfile($crawler): array
- {
+ private function titleProfile($crawler): array{
   $data = [];
   $elementTd = $crawler->filter('table.darktable tbody tr')->filter('td');
   foreach ($elementTd as $key => $td) {
@@ -93,8 +92,7 @@ class CharacterScrapingService {
   return $data;
  }
 
- private function getRightDataProfile($crawler): array
- {
+ private function dataProfile($crawler): array{
   $data = [];
   $elementTd = $crawler->filter('table.darktable tbody tr')->filter('td');
   foreach ($elementTd as $key => $td) {
@@ -105,18 +103,11 @@ class CharacterScrapingService {
   return $data;
  }
 
- private function mergeData($profileTitleResult, $profileDataResult, $avatarImage): array
- {
+ private function mergeData($profileTitleResult, $profileDataResult, $avatarImage): array{
   $arrayImage = ['Avatar' => $avatarImage];
-  array_shift($rightArrayData);
+  array_shift($profileDataResult);
   $combineArray = array_combine($profileTitleResult, $profileDataResult);
   $arrFinal = array_merge($combineArray, $arrayImage);
   return $arrFinal;
  }
-
-/*  public function utils() {
-echo "<pre>";
-print_r($var);
-echo "</pre>";
-} */
 }
