@@ -1,35 +1,39 @@
 <?php
-namespace App\Services\Character;
+namespace App\Services\WikiCharacter;
 
 use App\Models\Character;
+use Exception;
 use Goutte\Client;
-use Illuminate\Http\JsonResponse;
 
-class CharacterSyncService {
+class WikiSyncService {
  public function sync(): void {
   $this->initCharacter();
  }
 
- private function initCharacter(): JsonResponse {
+ private function initCharacter() {
   try {
    $url = 'https://kof.fandom.com/es/wiki/Personajes';
    $characterData = $this->characterInformation($url);
    $this->saveCharacter($characterData);
    $this->urlCharacters();
-   return response()->json(['message' => 'Character Sync Successfuly'], 201);
+   return back()->with('success', 'Personajes actualizados correctamente');
   } catch (\Exception$e) {
-   return response()->json(['message' => 'Character Sync Successfuly'], 500);
+   return back()->with('error', 'Error al actualizar los personajes' . $e->getMessage());
   }
  }
 
  private function characterInformation($url): array{
   $client = new Client();
-  $crawler = $client->request('GET', $url);
-  $characterFirstPart = $this->characterFirstPart($crawler);
-  $characterSecondPart = $this->characterSecondPart($crawler);
-  $characterThirdPart = $this->characterThirdPart($crawler);
-  $characterFourthPart = $this->characterFourthPart();
-  $characterArray = array_merge($characterFirstPart, $characterSecondPart, $characterThirdPart, $characterFourthPart);
+  try {
+   $crawler = $client->request('GET', $url);
+   $characterFirstPart = $this->characterFirstPart($crawler);
+   $characterSecondPart = $this->characterSecondPart($crawler);
+   $characterThirdPart = $this->characterThirdPart($crawler);
+   $characterFourthPart = $this->characterFourthPart();
+   $characterArray = array_merge($characterFirstPart, $characterSecondPart, $characterThirdPart, $characterFourthPart);
+  } catch (Exception $e) {
+   throw new Exception('Error al obtener la informacion de los personajes');
+  }
   return $characterArray;
  }
 
@@ -53,6 +57,9 @@ class CharacterSyncService {
   $elementTd = $crawler->filter('table tbody tr')->children('td');
   $names = $elementTd->children('a')->extract(['href']);
   $arrayNames = $this->characterProfile($names);
+  if (!$arrayNames) {
+   throw new Exception('Error en la primera parte de la obtencion de los personajes');
+  }
   return $arrayNames;
  }
 
@@ -60,6 +67,9 @@ class CharacterSyncService {
   $elementTd = $crawler->filter('table tbody tr')->children('td');
   $names = $elementTd->children('p > a')->extract(['href']);
   $arrayNames = $this->characterProfile($names);
+  if (!$arrayNames) {
+   throw new Exception('Error en la segunda parte de la obtencion de los personajes');
+  }
   return $arrayNames;
  }
 
@@ -67,6 +77,9 @@ class CharacterSyncService {
   $elementTd = $crawler->filter('table tbody tr')->children('td');
   $names = $elementTd->children('p > b > a')->extract(['href']);
   $arrayNames = $this->characterProfile($names);
+  if (!$arrayNames) {
+   throw new Exception('Error en la tercera parte de la obtencion de los personajes');
+  }
   return $arrayNames;
  }
 
@@ -76,6 +89,9 @@ class CharacterSyncService {
   ];
 
   $arrayNames = $this->characterProfile($remainingCharactersArray);
+  if (!$arrayNames) {
+   throw new Exception('Error en la cuarta parte de la obtencion de los personajes');
+  }
   return $arrayNames;
  }
 
@@ -84,6 +100,9 @@ class CharacterSyncService {
   foreach ($names as $name) {
    $name = str_replace('/es/wiki/', '', $name);
    $arrayNames[] = $name;
+  }
+  if (!$arrayNames) {
+   throw new Exception('Error en el split del nombre del personaje');
   }
   return $arrayNames;
  }

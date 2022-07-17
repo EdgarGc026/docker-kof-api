@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Character;
+namespace App\Services\WikiCharacter;
 
 use App\Models\Character;
 use Goutte\Client;
 
-class CharacterScrapingService {
+class WikiScrapingService {
  public function scraping() {
   $this->charactersProfile();
  }
