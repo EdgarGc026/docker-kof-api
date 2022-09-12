@@ -1,34 +1,25 @@
 <?php
 
-use App\Http\Controllers\Queue\ScrapingQueueController;
+use App\Http\Controllers\Scraping\WikiGame\GameScrapingController;
 use App\Http\Controllers\Scraping\WikiScrapingController;
-use App\Http\Controllers\Web\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {return view('welcome');});
 
-Route::get('/home', [HomeController::class, 'index'])->name('home.index');
-// Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('home.dashboard');
-
 //Para obtener los atributos de los personajes a scrapear (nombre, id, url)
-//Route::get('character/sync', [WikiScrapingController::class, 'characterSync'])->name('character.sync');
-//Route::post('character/sync', [WikiScrapingController::class, 'characterSync'])->name('character.sync');
 Route::match(['GET', 'POST'], 'wiki/sync', [WikiScrapingController::class, 'characterSync'])
- ->name('character.sync');
+ ->name('wiki.sync');
 
 //Hara el scraping de los personajes
-// Route::get('character/scraping', [CharacterScrapingController::class, 'characterScraping']);
-// Route::post('character/scraping', [CharacterScrapingController::class, 'characterScraping']);
-Route::match(['GET', 'POST'], 'character/scraping', [WikiScrapingController::class, 'characterScraping'])
- ->name('character.scraping');
+Route::match(['GET', 'POST'], 'wiki/scraping', [WikiScrapingController::class, 'characterScraping'])
+ ->name('wiki.scraping');
+
+Route::get('game/sync', [GameScrapingController::class, 'gameSync'])
+ ->name('game.sync');
 
 /* Rutas para testeo */
 //Probar por personaje
-Route::get('wiki/singleScraping', [WikiScrapingController::class, 'singleCharacter']);
-Route::post('wiki/singleScraping', [WikiScrapingController::class, 'singleCharacter']);
+Route::match(['GET', 'POST'], 'wiki/singleScraping', [WikiScrapingController::class, 'singleCharacter'])->name('wiki.singleScraping');
 
 //Ruta de prueba
-Route::get('wiki/remain', [WikiScrapingController::class, 'remainingCharacters']);
-
-//Rutas de prueba
-Route::any('wiki/syncQueue', [ScrapingQueueController::class, 'ButtonSync']);
+Route::get('wiki/remain', [WikiScrapingController::class, 'remainingCharacters'])->name('wikiRemain.scraping');

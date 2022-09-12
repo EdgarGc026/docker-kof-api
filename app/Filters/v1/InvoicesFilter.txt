@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Filters\v1;
+
+use App\Filters\ApiFilter;
+
+class InvoicesFilter extends ApiFilter {
+ protected $safeParams = ['name' => ['eq', 'gt', 'lt', 'lte', 'gte']];
+
+ protected $columnMap = ['name' => 'name'];
+
+ protected $operatorMap = [
+  'eq' => '=',
+  'lt' => '<',
+  'lte' => '<=',
+  'gt' => '>',
+  'gte' => '>=', //in like
+  'ne' => '!=',
+ ];
+
+}
